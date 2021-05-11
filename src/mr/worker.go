@@ -62,12 +62,13 @@ func mapfwrapper(mapf *python.PyObject, filename string, nReduce int) {
 	//_,err = file.Read(content)
 	fmt.Printf("read finished!\n")
 	if err != nil {
-		fmt.Printf("%v", err)
+		fmt.Printf("%v",err)
 		fmt.Println("ERRead")
 		log.Fatalf("cannot read %v", filename)
 	}
 	file.Close()
 	sftpClient.Close()
+	
 
 	kva := mapf.CallFunction(filename, string(content))
 	fmt.Printf("call finished!\n")
@@ -167,6 +168,7 @@ func reducefwrapper(reducef *python.PyObject, rnumber int, nMap int) {
 	ofile, _ := ioutil.TempFile(".", oname)
 	onametmp := ofile.Name()
 
+
 	//copied from mrsequencial.go
 	//
 	// call Reduce on each distinct key in intermediate[],
@@ -194,12 +196,14 @@ func reducefwrapper(reducef *python.PyObject, rnumber int, nMap int) {
 		i = j
 	}
 
+
+
 	ofile.Close()
 	if err := os.Rename(onametmp, oname); err != nil {
 		log.Fatalf("cannot rename %s", onametmp)
 	}
 
-	// YifanLu here
+	// YifanLu here 
 	// send reduced file to coordinator
 	sendRemote("root", "Ydhlw123", "192.168.0.111", oname) // or from disk ?
 

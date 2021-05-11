@@ -10,14 +10,13 @@ package main
 // Please do not change this file.
 //
 import (
+
+	"github.com/sbinet/go-python"
+	"6.824/mr"
 	"fmt"
 	"log"
 	"os"
-
-	"6.824/mr"
-	"github.com/sbinet/go-python"
 )
-
 var PyStr = python.PyString_FromString
 var GoStr = python.PyString_AS_STRING
 
@@ -31,7 +30,7 @@ func init() {
 func main() {
 
 	if len(os.Args) != 2 {
-		fmt.Fprintf(os.Stderr, "Usage: mrworker xxx.so\n")
+		fmt.Fprintf(os.Stderr, "Usage: mrworker xxx\n")
 		os.Exit(1)
 	}
 	module := ImportModule("/root/mapreduce/src/main", os.Args[1])
@@ -61,8 +60,8 @@ func loadPlugin(module *python.PyObject) (*python.PyObject, *python.PyObject) {
 
 }
 func ImportModule(dir, name string) *python.PyObject {
-	sysModule := python.PyImport_ImportModule("sys") // import sys
-	path := sysModule.GetAttrString("path")          // path = sys.path
-	python.PyList_Insert(path, 0, PyStr(dir))        // path.insert(0, dir)
-	return python.PyImport_ImportModule(name)        // return __import__(name)
+    sysModule := python.PyImport_ImportModule("sys") // import sys
+    path := sysModule.GetAttrString("path")                    // path = sys.path
+    python.PyList_Insert(path, 0, PyStr(dir))                     // path.insert(0, dir)
+    return python.PyImport_ImportModule(name)            // return __import__(name)
 }

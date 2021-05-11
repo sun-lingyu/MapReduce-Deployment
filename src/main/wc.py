@@ -4,7 +4,7 @@ import sys
 import os
 
 import string
-#import nltk
+import nltk
 
 
 def map(name, contents):
@@ -12,13 +12,14 @@ def map(name, contents):
 	remove =  string.maketrans(string.punctuation, string.punctuation,) 
 	lower1 = lower.translate(remove, string.punctuation,)
 	without_punctuation = lower1.translate(remove, string.digits,)
-	#tokens = nltk.word_tokenize(without_punctuation)
+	tokens = nltk.word_tokenize(without_punctuation)
 	kva = []
 	for p in tokens:
 		lisdict = {}
 		lisdict[p] = "1"
 		kva.append(lisdict)
 	return kva
+	
 def reduce(key, values):
 	return str(len(values))
 

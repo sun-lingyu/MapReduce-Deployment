@@ -15,7 +15,7 @@ source /etc/profile
 ln -s /usr/local/go/bin/go /usr/bin/go
 
 #test golang install
-go version
+#go version
 
 #change $GOPROXY
 export GO111MODULE=on
@@ -25,9 +25,18 @@ export GOPROXY=https://goproxy.io,direct
 go get golang.org/x/crypto/ssh@v0.0.0-20201221181555-eec23a3978ad
 
 #install python-dev
-sudo apt-get install python3-dev
-sudo apt-get install python2.7-dev
+sudo apt-get install python3-dev -y
+sudo apt-get install python2.7-dev -y
 
-scp -r root@192.168.0.111:/root/mapreduce /root/mapreduce
+#install nltk
+pip2 install nltk==3.0.0 -y
+apt install python3-pip
+pip3 install nltk -y
+
+#load files!
+#paste nltk_data to /root
+
+scp -r root@192.168.0.132:/root/mapreduce /root/mapreduce
+scp -r root@192.168.0.132:/root/nltk_data /root/nltk_data
 
 echo "Finish Install."
