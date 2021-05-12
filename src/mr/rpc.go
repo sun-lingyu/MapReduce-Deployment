@@ -10,10 +10,10 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strconv"
-	"time"
 	"path"
 	"path/filepath"
+	"strconv"
+	"time"
 
 	"net"
 
@@ -47,7 +47,17 @@ type FileRequestReply struct {
 	Status    int //0: normal; 1: exception
 	Filenames []string
 	Hostnames []string
-	Ips       []string
+	Ip        []string
+}
+
+type NotifyDeadWorkerArgs struct {
+	MyWorkerid   string
+	DeadWorkerid string
+	DeadFileName string
+}
+
+type NotifyDeadWorkerReply struct {
+	Err string
 }
 
 //
@@ -127,8 +137,8 @@ func connect(user, password, host string, port int) (*sftp.Client, error) {
 		Auth:    auth,
 		Timeout: 30 * time.Second,
 		HostKeyCallback: func(hostname string, remote net.Addr, key ssh.PublicKey) error {
-            return nil
-        },
+			return nil
+		},
 	}
 
 	// connet to ssh
@@ -158,25 +168,25 @@ func readRemote(user, password, host, filename string) (*sftp.Client, *sftp.File
 	}
 	//defer sftpClient.Close()
 
-	filename=filepath.Join("/root/mapreduce/src/main",filename)
+	filename = filepath.Join("/root/mapreduce/src/main", filename)
 	fmt.Println(filename)
 
 	srcFile, err := sftpClient.Open(filename)
 	return sftpClient, srcFile, err
 }
 
-func sendRemote(user, password, host, oname string) (error){
+func sendRemote(user, password, host, oname string) error {
 	sftpClient, err := connect(user, password, host, 22)
 	if err != nil {
 		log.Fatal(err)
 	}
-	
+
 	var remoteDir = "/root/mapreduce/src/main"
 	var remoteFileName = oname
 
 	dstFile, err := sftpClient.Create(path.Join(remoteDir, remoteFileName))
 	if err != nil {
-	  log.Fatal(err)
+		log.Fatal(err)
 	}
 	defer dstFile.Close()
 
@@ -184,7 +194,7 @@ func sendRemote(user, password, host, oname string) (error){
 	if err != nil {
 		log.Fatal(err)
 	}
-  
+
 	buf := make([]byte, 1024)
 	for {
 		n, err := file.Read(buf)
@@ -194,9 +204,9 @@ func sendRemote(user, password, host, oname string) (error){
 		if err != nil {
 			log.Fatal(err)
 		}
-	  dstFile.Write(buf[:n])
+		dstFile.Write(buf[:n])
 	}
-  
+
 	fmt.Println("copy file to remote server finished!")
 	return err
 }
