@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"net/rpc"
 	"path/filepath"
-	"strings"
 	"sync"
 	"time"
 )
@@ -24,7 +23,17 @@ type reducework struct {
 	filenames   []string //location of intermediate files
 	finishednum int      //number of generated(finished) intermediate files when the reduce worker's last requst came
 
-	ip []string //ip of remote servers. used together with filenames []string
+	ips []string //ip of remote servers. used together with filenames []string
+}
+
+type maplist struct {
+	list []mapwork
+	lock sync.Mutex
+}
+
+type reducelist struct {
+	list []reducework
+	lock sync.Mutex
 }
 
 //Coordinator struct
@@ -90,7 +99,7 @@ func (c *Coordinator) WorkHandler(args *RequestArgs, reply *WorkRequestReply) er
 			for i := 0; i < c.nReduce; i++ {
 				ifilename := fmt.Sprintf("mr-%s-%d", filepath.Base(filename), i)
 				c.reducelist[i].filenames = append(c.reducelist[i].filenames, ifilename)
-				c.reducelist[i].ip = append(c.reducelist[i].ip, args.Workerid)
+				c.reducelist[i].ips = append(c.reducelist[i].ips, args.Workerid)
 			}
 			c.reducelock.Unlock()
 			goto checkidle
@@ -179,7 +188,7 @@ func (c *Coordinator) FileHandler(args *RequestArgs, reply *FileRequestReply) er
 		if c.reducelist[i].workerid == args.Workerid && c.reducelist[i].state == 1 { //in-progress
 			reply.Status = 0 //normal
 			reply.Filenames = c.reducelist[i].filenames[c.reducelist[i].finishednum:]
-			reply.Ip = c.reducelist[i].ip[c.reducelist[i].finishednum:]
+			reply.Ips = c.reducelist[i].ips[c.reducelist[i].finishednum:]
 			c.reducelist[i].finishednum = len(c.reducelist[i].filenames)
 			c.reducelock.Unlock()
 			return nil
@@ -197,43 +206,6 @@ func (c *Coordinator) FileHandler(args *RequestArgs, reply *FileRequestReply) er
 	//for output simplicity, the following Printf sentence is commented out.
 	//fmt.Printf("workerid %d not found in in-progress workers. This message can be ignored\n", workerid)
 	return nil
-}
-func remove(s []string, i int) []string {
-	s[0], s[i] = s[i], s[0]
-	return s[1:]
-}
-func (c *Coordinator) NotifyDeadWorkerHandler(args *NotifyDeadWorkerArgs, reply *NotifyDeadWorkerReply) {
-	workerid := args.MyWorkerid
-	deadworkerid := args.DeadWorkerid
-	deadfilename := args.DeadFileName
-
-	//remove the corresponding intermediate file from workerid's intermediate files
-	c.reducelock.Lock()
-	for i := range c.reducelist {
-		if c.reducelist[i].workerid == workerid && c.reducelist[i].state == 1 {
-			c.reducelist[i].finishednum--
-			for idx, ip := range c.reducelist[i].ip {
-				if ip == deadworkerid {
-					remove(c.reducelist[i].ip, idx)
-					remove(c.reducelist[i].filenames, idx)
-				}
-			}
-		}
-	}
-	c.reducelock.Unlock()
-
-	//set the corresponding map work to idle
-	c.maplock.Lock()
-	for i := range c.maplist {
-		if c.maplist[i].workerid == deadworkerid && filepath.Base(c.maplist[i].filename) == strings.Split(deadfilename, "-")[1] {
-			c.maplist[i].state = 0
-			c.maplist[i].workerid = ""
-		}
-	}
-	c.maplock.Unlock()
-
-	reply.Err = "OK"
-	return
 }
 
 //

@@ -15,9 +15,6 @@ import (
 	"github.com/sbinet/go-python"
 )
 
-var retry_wait_duration time.Duration = 100 * time.Millisecond
-var retry_wait_time = 3
-
 func init() {
 	err := python.Initialize()
 	if err != nil {
@@ -65,12 +62,13 @@ func mapfwrapper(mapf *python.PyObject, filename string, nReduce int) {
 	//_,err = file.Read(content)
 	fmt.Printf("read finished!\n")
 	if err != nil {
-		fmt.Printf("%v", err)
+		fmt.Printf("%v",err)
 		fmt.Println("ERRead")
 		log.Fatalf("cannot read %v", filename)
 	}
 	file.Close()
 	sftpClient.Close()
+	
 
 	kva := mapf.CallFunction(filename, string(content))
 	fmt.Printf("call finished!\n")
@@ -143,22 +141,9 @@ func reducefwrapper(reducef *python.PyObject, rnumber int, nMap int) {
 		//read files got from the reply
 		for idx, filename := range reply.Filenames {
 			fmt.Println(filename)
-			sftpClient, ifile, err := readRemote("root", "Ydhlw123", reply.Ip[idx], filename)
-			retry := 0
-			for err != nil && retry < 3 {
-				//something went wrong on server reply.Ip[idx]
-				//retry
-				time.Sleep(retry_wait_duration)
-				sftpClient, ifile, err = readRemote("root", "Ydhlw123", reply.Ip[idx], filename)
-				retry++
-			}
-			if retry == 3 {
-				//deem reply.Ip[idx] as failed
-				//notify the coordinator
-				//then continue
-				fileread--
-				NotifyDeadWorker(reply.Ip[idx], filename)
-				continue
+			sftpClient, ifile, err := readRemote("root", "Ydhlw123", reply.Ips[idx], filename)
+			if err != nil {
+				log.Fatalf("cannot open %v", filename)
 			}
 			dec := json.NewDecoder(ifile)
 			for {
@@ -182,6 +167,7 @@ func reducefwrapper(reducef *python.PyObject, rnumber int, nMap int) {
 	oname := fmt.Sprintf("mr-out-%d", rnumber)
 	ofile, _ := ioutil.TempFile(".", oname)
 	onametmp := ofile.Name()
+
 
 	//copied from mrsequencial.go
 	//
@@ -210,12 +196,14 @@ func reducefwrapper(reducef *python.PyObject, rnumber int, nMap int) {
 		i = j
 	}
 
+
+
 	ofile.Close()
 	if err := os.Rename(onametmp, oname); err != nil {
 		log.Fatalf("cannot rename %s", onametmp)
 	}
 
-	// YifanLu here
+	// YifanLu here 
 	// send reduced file to coordinator
 	sendRemote("root", "Ydhlw123", "192.168.0.111", oname) // or from disk ?
 
@@ -251,23 +239,6 @@ func Worker(mapf *python.PyObject,
 	// uncomment to send the Example RPC to the coordinator.
 	// CallExample()
 
-}
-
-//function to notify the coordinator that a particular worker has dead, and its intermediate results were lost.
-func NotifyDeadWorker(deadworkerid string, deadfilename string) NotifyDeadWorkerReply {
-	args := NotifyDeadWorkerArgs{GetOutboundIP(), deadworkerid, deadfilename}
-	reply := NotifyDeadWorkerReply{}
-	repeat := 0
-
-	ok := call("Coordinator.NotifyDeadWorkerHandler", &args, &reply)
-	for ok != true && repeat < 10 { //get timeout
-		ok = call("Coordinator.NotifyDeadWorkerHandler", &args, &reply)
-		repeat++
-	}
-	if repeat == 10 { //repeat 10 times
-		log.Fatal("AskWork: max retries exceeded.")
-	}
-	return reply
 }
 
 //function to ask the coordinator for work
