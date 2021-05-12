@@ -9,7 +9,30 @@ import (
 	"path/filepath"
 	"sync"
 	"time"
+	"html/template"
+	"encoding/json"
+	"sort"
 )
+// 用于http server template数据传递
+type Visual_Data struct {
+	Data1 string
+	Data2 string
+}
+
+// 三层级联的map任务可视化
+type Map_visual2 struct {
+	Name string `json:"name"`
+}
+
+type Map_visual1 struct {
+	Name     string        `json:"name"`
+	Children []Map_visual2 `json:"children"`
+}
+
+type Map_visual0 struct {
+	Name     string        `json:"name"`
+	Children []Map_visual1 `json:"children"`
+}
 
 type mapwork struct {
 	workerid string //id of worker
@@ -234,6 +257,115 @@ func (c *Coordinator) server() {
 	go http.Serve(l, nil)
 }
 
+// get json-like string data 
+// send them to http template to visualize map & reduce tasks 
+func (c *Coordinator) Get_visual_data() (string, string) {
+
+	map_list := c.maplist
+	reduce_list := c.reducelist
+
+	map_map := make(map[string][]Map_visual2)
+	map_visual0 := Map_visual0{}
+
+	for i := range map_list { 
+		map_work := map_list[i]
+		ip := "Worker " + map_work.workerid
+		filename := map_work.filename
+		state := map_work.state
+		if state == 0 {
+			continue
+		} else if state == 1 {
+			map_map[ip] = append(map_map[ip], Map_visual2{Name: filename + "[Processing]"})
+		} else {
+			map_map[ip] = append(map_map[ip], Map_visual2{Name: filename + "[Done]"})
+		}
+	}
+
+	var ips []string
+	for ip := range map_map {
+		ips = append(ips, ip)
+	}
+	sort.Strings(ips)
+
+	map_visual0.Name = "MapWork"
+	for _, ip := range ips {
+		files := map_map[ip]
+		map_visual1 := Map_visual1{}
+		map_visual1.Name = ip
+		map_visual1.Children = files
+		map_visual0.Children = append(map_visual0.Children, map_visual1)
+	}
+	map_visual_json, _ := json.Marshal(map_visual0)
+	// map_string := string(map_visual_json)
+	// fmt.Println(map_string)
+
+	// 对reduce work重复操作
+	reduce_map := make(map[string][]Map_visual2)
+	reduce_visual0 := Map_visual0{}
+	for i := range reduce_list { //initialze map works' input file names
+		reduce_work := reduce_list[i]
+		ip := "Reducer " + reduce_work.workerid
+		state := reduce_work.state
+		filenames := reduce_work.filenames
+		files_done := reduce_work.finishednum
+		if state == 0 {
+			continue
+		} else if state == 1 {
+			for j := range filenames {
+				filename := filenames[j]
+				if j < files_done {
+					reduce_map[ip] = append(reduce_map[ip], Map_visual2{Name: filename + "[Done]"})
+				} else {
+					reduce_map[ip] = append(reduce_map[ip], Map_visual2{Name: filename + "[Wait]"})
+				}
+			}
+		} else {
+			for j := range filenames {
+				filename := filenames[j]
+				reduce_map[ip] = append(reduce_map[ip], Map_visual2{Name: filename + "[Done]"})
+			}
+		}
+
+	}
+
+	ips = []string{}
+	for ip := range reduce_map {
+		ips = append(ips, ip)
+	}
+	sort.Strings(ips)
+
+	reduce_visual0.Name = "ReduceWork"
+	for _, ip := range ips {
+		files := reduce_map[ip]
+		reduce_visual1 := Map_visual1{}
+		reduce_visual1.Name = ip
+		reduce_visual1.Children = files
+		reduce_visual0.Children = append(reduce_visual0.Children, reduce_visual1)
+	}
+
+	reduce_visual_json, _ := json.Marshal(reduce_visual0)
+	// fmt.Println(ips)
+
+	return string(map_visual_json), string(reduce_visual_json)
+
+}
+
+// start http server, listening at 8081 port.
+func (c *Coordinator) start_web() {
+	http.HandleFunc("/", c.httpserver)
+	http.ListenAndServe(":8081", nil)
+}
+
+// http server
+func (c *Coordinator) httpserver(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm() //解析参数，默认是不会解析的
+	map_visual_data, reduce_visual_data := c.Get_visual_data()
+	data := &Visual_Data{Data1: map_visual_data, Data2: reduce_visual_data}
+	t, _ := template.ParseFiles("tree-polyline.html")
+	t.Execute(w, data)
+}
+
+
 //
 // main/mrcoordinator.go calls Done() periodically to find out
 // if the entire job has finished.
@@ -267,6 +399,7 @@ func MakeCoordinator(files []string, nReduce int) *Coordinator {
 		c.maplist[i].filename = files[i]
 	}
 
+	go c.start_web()
 	c.server()
 	return &c
 }
