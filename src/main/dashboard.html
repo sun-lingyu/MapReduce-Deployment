@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+    <head>
+        <meta charset="utf-8">
+    </head>
+    <body style="height: 100%; margin: 0">
+        <nav class="top-bar" data-topbar>
+            <ul class="title-area">
+              <li class="name">
+                <!-- 如果你不需要标题或图标可以删掉它 -->
+                <h1><a href="#">MapReduce Dashboard</a></h1>
+              </li>
+                <!-- 小屏幕上折叠按钮: 去掉 .menu-icon 类，可以去除图标。 
+                如果需要只显示图片，可以删除 "Menu" 文本 -->
+              <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
+            </ul>
+          
+            <section class="top-bar-section">
+              <ul class="left">
+                <li><a href="javascript:showall();">全部</a></li>  
+                <li><a href="javascript:hideSankey();">Worker视角</a></li>
+                <li><a href="javascript:hideTree();">File视角</a></li>
+              </ul>
+            </section>
+          </nav>
+        <div style="text-align:center;">
+            <input type="checkbox" id="auto-refresh-checkbox" >Stop</input>
+        </div>
+        <div style="height: 100%; width: 50%; float:left;" id="tree1">
+            <div id="container1" style="height: 100%; width: 100%;"></div>
+        </div>
+
+        <div style="height: 100%; width: 50%; float:left;" id="tree2">
+            <div id="container2" style="height: 100%; width: 100%;"></div>
+        </div>
+        
+        <div style="height: 100%; width: 100%; float:left;" id="sankey">
+            <div id="container3" style="height: 100%; width: 100%;"></div>
+        </div>
+
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.staticfile.org/foundation/5.5.3/css/foundation.min.css">
+        <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+        <script src="https://cdn.staticfile.org/foundation/5.5.3/js/foundation.min.js"></script>
+        <script src="https://cdn.staticfile.org/foundation/5.5.3/js/vendor/modernizr.js"></script>
+        <script type="text/javascript">
+var dom1 = document.getElementById("container1");
+var myChart1 = echarts.init(dom1);
+
+var dom2 = document.getElementById("container2");
+var myChart2 = echarts.init(dom2);
+
+var dom3 = document.getElementById("container3");
+var myChart3 = echarts.init(dom3);
+
+var option;
+var map_tree,reduce_tree,sankey_name,sankey_link;
+
+function updateData(){
+    $.get("http://119.3.158.62:8081/data",function(data){
+        myChart1.hideLoading();
+        myChart2.hideLoading();
+        myChart3.hideLoading();
+
+        map_tree = data["Data1"];
+        reduce_tree = data["Data2"]
+        sankey_name = data["Data3"]
+        sankey_link = data["Data4"]
+        
+        myChart1.setOption({
+            animation: false,
+            tooltip: {
+                trigger: 'item',
+                triggerOn: 'mousemove'
+            },
+            series:[
+                {
+                    type: 'tree',
+                    id: 0,
+                    name: 'tree1',
+                    data: [map_tree],
+
+                    top: '5%',
+                    left: '20%',
+                    bottom: '5%',
+                    right: '10%',
+                    width: "400px",
+
+                    symbolSize: 7,
+
+                    edgeShape: 'polyline',
+                    edgeForkPosition: '63%',
+                    initialTreeDepth: 3,
+
+                    lineStyle: {
+                        width: 4
+                    },
+
+                    label: {
+                        backgroundColor: '#fff',
+                        position: 'left',
+                        verticalAlign: 'middle',
+                        align: 'right'
+                    },
+
+                    leaves: {
+                        label: {
+                            position: 'right',
+                            verticalAlign: 'middle',
+                            align: 'left'
+                        }
+                    },
+
+                    emphasis: {
+                        focus: 'descendant'
+                    },
+
+                    expandAndCollapse: true,
+                    animationDuration: 550,
+                    animationDurationUpdate: 750
+                }
+            ]
+        });
+
+
+        myChart2.setOption({
+            animation: false,
+            tooltip: {
+                trigger: 'item',
+                triggerOn: 'mousemove'
+            },
+            series:[
+                {
+                    type: 'tree',
+                    id: 0,
+                    name: 'tree1',
+                    data: [reduce_tree],
+
+                    top: '5%',
+                    left: '12%',
+                    bottom: '5%',
+                    right: '20%',
+                    width: "400px",
+
+                    symbolSize: 7,
+
+                    edgeShape: 'polyline',
+                    edgeForkPosition: '63%',
+                    initialTreeDepth: 3,
+
+                    lineStyle: {
+                        width: 4
+                    },
+
+                    label: {
+                        backgroundColor: '#fff',
+                        position: 'left',
+                        verticalAlign: 'middle',
+                        align: 'right'
+                    },
+
+                    leaves: {
+                        label: {
+                            position: 'right',
+                            verticalAlign: 'middle',
+                            align: 'left'
+                        }
+                    },
+
+                    emphasis: {
+                        focus: 'descendant'
+                    },
+
+                    expandAndCollapse: true,
+                    animationDuration: 550,
+                    animationDurationUpdate: 750
+                }
+            ]
+        });
+
+
+        myChart3.setOption({
+            animation: false,
+            series: {
+                type: 'sankey',
+                layout: 'none',
+                emphasis: {
+                    focus: 'adjacency'
+                },
+                data:  sankey_name,
+                links: sankey_link,
+
+                lineStyle: {
+                    color: 'source',
+                    curveness: 0.8
+                }
+            }
+        });
+
+    });
+};
+
+
+function reloadData(){
+  var refreshEnabled = document.getElementById('auto-refresh-checkbox');
+  if(!refreshEnabled.checked) {
+    updateData()
+  }
+}
+setInterval(reloadData, 200);
+
+function hideTree(){
+    tree1 = document.getElementById('tree1')
+    tree1.style.display = 'none';
+    tree2 = document.getElementById('tree2')
+    tree2.style.display = 'none';
+    sankey = document.getElementById('sankey')
+    sankey.style.display = 'block'
+}
+function hideSankey(){
+    tree1 = document.getElementById('tree1')
+    tree1.style.display = 'block';
+    tree2 = document.getElementById('tree2')
+    tree2.style.display = 'block';
+    sankey = document.getElementById('sankey')
+    sankey.style.display = 'none'
+}
+function showall(){
+    tree1 = document.getElementById('tree1')
+    tree1.style.display = 'block';
+    tree2 = document.getElementById('tree2')
+    tree2.style.display = 'block';
+    sankey = document.getElementById('sankey')
+    sankey.style.display = 'block'
+}
+
+        </script>
+    </body>
+</html>
+    
