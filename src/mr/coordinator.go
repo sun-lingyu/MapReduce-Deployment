@@ -1,39 +1,75 @@
 package mr
 
 import (
+	"encoding/json"
 	"fmt"
+	"html/template"
 	"log"
 	"net"
 	"net/http"
 	"net/rpc"
 	"path/filepath"
+	"sort"
 	"sync"
 	"time"
-	"html/template"
-	"encoding/json"
-	"sort"
+
+	"6.824/asset"
 )
+
 // 用于http server template数据传递
 type Visual_Data struct {
-	Data1 string
-	Data2 string
+	Data1 Tree_0
+	Data2 Tree_0
+	Data3 []Sankey_name
+	Data4 []Sankey_link
 }
 
 // 三层级联的map任务可视化
-type Map_visual2 struct {
+// ips -> files
+type Tree_2 struct {
+	Name      string            `json:"name"`
+	ItemStyle map[string]string `json:"itemStyle"`
+	Lable     map[string]string `json:"label"`
+	State     int               `json:"state"`
+	Partition int               `json:"partition"` // only used in reduce work
+}
+
+// coordinator -> ips
+type Tree_1 struct {
+	Name      string            `json:"name"`
+	ItemStyle map[string]string `json:"itemStyle"`
+	Lable     map[string]string `json:"label"`
+	State     int               `json:"state"`
+	Children  []Tree_2          `json:"children"`
+}
+
+// coordinator
+type Tree_0 struct {
+	Name     string   `json:"name"`
+	Children []Tree_1 `json:"children"`
+}
+
+//桑基图 data 结构
+type Sankey_names struct {
+	Names []Sankey_name
+}
+
+// 桑吉图 data 内部的map结构
+type Sankey_name struct {
 	Name string `json:"name"`
 }
 
-type Map_visual1 struct {
-	Name     string        `json:"name"`
-	Children []Map_visual2 `json:"children"`
+// 桑吉图 links 结构
+type Sankey_links struct {
+	Links []Sankey_link
 }
 
-type Map_visual0 struct {
-	Name     string        `json:"name"`
-	Children []Map_visual1 `json:"children"`
+// 桑吉图 link 结构
+type Sankey_link struct {
+	Source string `json:"source"`
+	Target string `json:"target"`
+	Value  int    `json:"value"`
 }
-
 type mapwork struct {
 	workerid string //id of worker
 	filename string //input file name
@@ -257,51 +293,47 @@ func (c *Coordinator) server() {
 	go http.Serve(l, nil)
 }
 
-// get json-like string data 
-// send them to http template to visualize map & reduce tasks 
-func (c *Coordinator) Get_visual_data() (string, string) {
+func (c *Coordinator) Get_visual_data() Visual_Data {
 
 	map_list := c.maplist
 	reduce_list := c.reducelist
 
-	map_map := make(map[string][]Map_visual2)
-	map_visual0 := Map_visual0{}
+	map_subtree := make(map[string][]Tree_2)
+	map_tree := Tree_0{}
 
-	for i := range map_list { 
+	for i := range map_list {
 		map_work := map_list[i]
-		ip := "Worker " + map_work.workerid
+		ip := "Mapper " + map_work.workerid
 		filename := map_work.filename
 		state := map_work.state
 		if state == 0 {
 			continue
 		} else if state == 1 {
-			map_map[ip] = append(map_map[ip], Map_visual2{Name: filename + "[Processing]"})
+			map_subtree[ip] = append(map_subtree[ip], Tree_2{Name: filename, ItemStyle: asset.Itemstyle_setting_notdone, State: 0})
 		} else {
-			map_map[ip] = append(map_map[ip], Map_visual2{Name: filename + "[Done]"})
+			map_subtree[ip] = append(map_subtree[ip], Tree_2{Name: filename, ItemStyle: asset.Itemstyle_setting_done, State: 1})
 		}
 	}
 
+	// ip排序
 	var ips []string
-	for ip := range map_map {
+	for ip := range map_subtree {
 		ips = append(ips, ip)
 	}
 	sort.Strings(ips)
 
-	map_visual0.Name = "MapWork"
+	map_tree.Name = "MapWork"
 	for _, ip := range ips {
-		files := map_map[ip]
-		map_visual1 := Map_visual1{}
-		map_visual1.Name = ip
-		map_visual1.Children = files
-		map_visual0.Children = append(map_visual0.Children, map_visual1)
+		files := map_subtree[ip]
+		sub_tree := Tree_1{}
+		sub_tree.Name = ip
+		sub_tree.Children = files
+		map_tree.Children = append(map_tree.Children, sub_tree)
 	}
-	map_visual_json, _ := json.Marshal(map_visual0)
-	// map_string := string(map_visual_json)
-	// fmt.Println(map_string)
 
 	// 对reduce work重复操作
-	reduce_map := make(map[string][]Map_visual2)
-	reduce_visual0 := Map_visual0{}
+	reduce_subtree := make(map[string][]Tree_2)
+	reduce_tree := Tree_0{}
 	for i := range reduce_list { //initialze map works' input file names
 		reduce_work := reduce_list[i]
 		ip := "Reducer " + reduce_work.workerid
@@ -314,57 +346,92 @@ func (c *Coordinator) Get_visual_data() (string, string) {
 			for j := range filenames {
 				filename := filenames[j]
 				if j < files_done {
-					reduce_map[ip] = append(reduce_map[ip], Map_visual2{Name: filename + "[Done]"})
+					reduce_subtree[ip] = append(reduce_subtree[ip], Tree_2{Name: filename, ItemStyle: asset.Itemstyle_setting_done, State: 1, Partition: i})
 				} else {
-					reduce_map[ip] = append(reduce_map[ip], Map_visual2{Name: filename + "[Wait]"})
+					reduce_subtree[ip] = append(reduce_subtree[ip], Tree_2{Name: filename, ItemStyle: asset.Itemstyle_setting_notdone, State: 0, Partition: i})
 				}
 			}
 		} else {
 			for j := range filenames {
 				filename := filenames[j]
-				reduce_map[ip] = append(reduce_map[ip], Map_visual2{Name: filename + "[Done]"})
+				reduce_subtree[ip] = append(reduce_subtree[ip], Tree_2{Name: filename, ItemStyle: asset.Itemstyle_setting_done, State: 1, Partition: i})
 			}
 		}
 
 	}
 
+	// ip排序
 	ips = []string{}
-	for ip := range reduce_map {
+	for ip := range reduce_subtree {
 		ips = append(ips, ip)
 	}
 	sort.Strings(ips)
 
-	reduce_visual0.Name = "ReduceWork"
+	reduce_tree.Name = "ReduceWork"
 	for _, ip := range ips {
-		files := reduce_map[ip]
-		reduce_visual1 := Map_visual1{}
-		reduce_visual1.Name = ip
-		reduce_visual1.Children = files
-		reduce_visual0.Children = append(reduce_visual0.Children, reduce_visual1)
+		files := reduce_subtree[ip]
+		sub_tree := Tree_1{}
+		sub_tree.Name = ip
+		sub_tree.Children = files
+		reduce_tree.Children = append(reduce_tree.Children, sub_tree)
 	}
 
-	reduce_visual_json, _ := json.Marshal(reduce_visual0)
-	// fmt.Println(ips)
+	// 桑基图
+	sankey_names := Sankey_names{}
+	sankey_links := Sankey_links{}
+	n_reduce := c.nReduce
 
-	return string(map_visual_json), string(reduce_visual_json)
+	for _, ip := range map_tree.Children {
+		sankey_names.Names = append(sankey_names.Names, Sankey_name{Name: ip.Name})
+		for _, inputfile := range ip.Children {
+			sankey_names.Names = append(sankey_names.Names, Sankey_name{Name: inputfile.Name})
+			sankey_links.Links = append(sankey_links.Links, Sankey_link{Source: inputfile.Name, Target: ip.Name, Value: 1})
+			for i := 0; i < n_reduce; i++ {
+				intermediatefile := fmt.Sprintf("mr-%s-%d", inputfile.Name, i)
+				sankey_links.Links = append(sankey_links.Links, Sankey_link{Source: ip.Name, Target: intermediatefile, Value: 1})
+			}
+		}
+	}
+	var partition_prev = -1
+	for _, ip := range reduce_tree.Children {
+		sankey_names.Names = append(sankey_names.Names, Sankey_name{Name: ip.Name})
+		for _, intermediatefile := range ip.Children {
+			sankey_names.Names = append(sankey_names.Names, Sankey_name{Name: intermediatefile.Name})
+			sankey_links.Links = append(sankey_links.Links, Sankey_link{Source: intermediatefile.Name, Target: ip.Name, Value: 1})
+			if intermediatefile.Partition != partition_prev {
+				oname := fmt.Sprintf("mr-out-%d", intermediatefile.Partition)
+				sankey_names.Names = append(sankey_names.Names, Sankey_name{Name: oname})
+				sankey_links.Links = append(sankey_links.Links, Sankey_link{Source: ip.Name, Target: oname, Value: 1})
+			}
+			partition_prev = intermediatefile.Partition
+		}
+	}
+
+	all_data := Visual_Data{Data1: map_tree, Data2: reduce_tree, Data3: sankey_names.Names, Data4: sankey_links.Links}
+
+	return all_data
 
 }
 
-// start http server, listening at 8081 port.
 func (c *Coordinator) start_web() {
+	http.HandleFunc("/data", c.dataserver)
 	http.HandleFunc("/", c.httpserver)
 	http.ListenAndServe(":8081", nil)
 }
 
-// http server
+// YifanLu here
 func (c *Coordinator) httpserver(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm() //解析参数，默认是不会解析的
-	map_visual_data, reduce_visual_data := c.Get_visual_data()
-	data := &Visual_Data{Data1: map_visual_data, Data2: reduce_visual_data}
-	t, _ := template.ParseFiles("tree-polyline.html")
-	t.Execute(w, data)
+	t, _ := template.ParseFiles("dashboard.html")
+	t.Execute(w, nil)
 }
 
+func (c *Coordinator) dataserver(w http.ResponseWriter, r *http.Request) {
+	visual_Data := c.Get_visual_data()
+	json_obj, _ := json.Marshal(visual_Data)
+	w.Header().Set("content-type", "application/json")
+	w.Write(json_obj)
+}
 
 //
 // main/mrcoordinator.go calls Done() periodically to find out
