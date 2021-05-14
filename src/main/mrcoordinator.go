@@ -23,6 +23,8 @@ func main() {
 		os.Exit(1)
 	}
 
+	startTime := time.Now().UnixNano()
+
 	m := mr.MakeCoordinator(os.Args[1:], 10)
 
 	// YifanLu here
@@ -35,6 +37,9 @@ func main() {
 	for m.Done() == false {
 		time.Sleep(time.Second)
 	}
+	endTime := time.Now().UnixNano()
+	seconds := float64((endTime - startTime) / 1e9)
+	fmt.Printf("EXECUTION FINISHED!\nRUNNING TIME:%v\n", seconds)
 
 	time.Sleep(time.Second * 10086)
 }

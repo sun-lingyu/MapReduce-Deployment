@@ -1,0 +1,259 @@
+0 192.168.0.132
+1 192.168.0.184
+Send command to worker 0
+2 192.168.0.33
+Send command to worker 1
+3 192.168.0.199
+Send command to worker 2
+/root/mapreduce/src/main/pg-being_ernest.txt
+read finished!
+call finished!
+Send command to worker 3
+/root/mapreduce/src/main/pg-dorian_gray.txt
+read finished!
+call finished!
+/root/mapreduce/src/main/pg-frankenstein.txt
+read finished!
+/root/mapreduce/src/main/pg-grimm.txt
+read finished!
+call finished!
+call finished!
+/root/mapreduce/src/main/pg-huckleberry_finn.txt
+read finished!
+call finished!
+/root/mapreduce/src/main/pg-metamorphosis.txt
+read finished!
+call finished!
+/root/mapreduce/src/main/pg-sherlock_holmes.txt
+read finished!
+mr-pg-being_ernest.txt-0
+call finished!
+/root/mapreduce/src/main/pg-tom_sawyer.txt
+read finished!
+/root/mapreduce/src/main/mr-pg-being_ernest.txt-0
+mr-pg-dorian_gray.txt-0
+call finished!
+mr-pg-being_ernest.txt-1
+/root/mapreduce/src/main/mr-pg-dorian_gray.txt-0
+mr-pg-frankenstein.txt-0
+/root/mapreduce/src/main/mr-pg-being_ernest.txt-1
+mr-pg-dorian_gray.txt-1
+/root/mapreduce/src/main/mr-pg-frankenstein.txt-0
+/root/mapreduce/src/main/mr-pg-dorian_gray.txt-1
+mr-pg-metamorphosis.txt-0
+mr-pg-frankenstein.txt-1
+/root/mapreduce/src/main/mr-pg-metamorphosis.txt-0
+/root/mapreduce/src/main/mr-pg-frankenstein.txt-1
+mr-pg-grimm.txt-0
+mr-pg-being_ernest.txt-2
+mr-pg-metamorphosis.txt-1
+mr-pg-being_ernest.txt-3
+/root/mapreduce/src/main/mr-pg-metamorphosis.txt-1
+mr-pg-grimm.txt-1
+/root/mapreduce/src/main/mr-pg-being_ernest.txt-2
+mr-pg-dorian_gray.txt-2
+/root/mapreduce/src/main/mr-pg-grimm.txt-0
+mr-pg-huckleberry_finn.txt-0
+/root/mapreduce/src/main/mr-pg-being_ernest.txt-3
+mr-pg-dorian_gray.txt-3
+/root/mapreduce/src/main/mr-pg-dorian_gray.txt-2
+/root/mapreduce/src/main/mr-pg-grimm.txt-1
+mr-pg-frankenstein.txt-2
+mr-pg-huckleberry_finn.txt-1
+/root/mapreduce/src/main/mr-pg-huckleberry_finn.txt-0
+/root/mapreduce/src/main/mr-pg-dorian_gray.txt-3
+mr-pg-tom_sawyer.txt-0
+mr-pg-frankenstein.txt-3
+/root/mapreduce/src/main/mr-pg-frankenstein.txt-2
+mr-pg-metamorphosis.txt-2
+/root/mapreduce/src/main/mr-pg-huckleberry_finn.txt-1
+mr-pg-tom_sawyer.txt-1
+/root/mapreduce/src/main/mr-pg-frankenstein.txt-3
+mr-pg-metamorphosis.txt-3
+/root/mapreduce/src/main/mr-pg-tom_sawyer.txt-0
+mr-pg-sherlock_holmes.txt-0
+/root/mapreduce/src/main/mr-pg-metamorphosis.txt-2
+mr-pg-grimm.txt-2
+/root/mapreduce/src/main/mr-pg-tom_sawyer.txt-1
+mr-pg-sherlock_holmes.txt-1
+/root/mapreduce/src/main/mr-pg-metamorphosis.txt-3
+mr-pg-grimm.txt-3
+/root/mapreduce/src/main/mr-pg-sherlock_holmes.txt-0
+/root/mapreduce/src/main/mr-pg-sherlock_holmes.txt-1
+/root/mapreduce/src/main/mr-pg-grimm.txt-2
+/root/mapreduce/src/main/mr-pg-grimm.txt-3
+mr-pg-huckleberry_finn.txt-2
+mr-pg-huckleberry_finn.txt-3
+copy file to remote server finished!
+mr-pg-being_ernest.txt-4
+/root/mapreduce/src/main/mr-pg-huckleberry_finn.txt-2
+/root/mapreduce/src/main/mr-pg-huckleberry_finn.txt-3
+mr-pg-tom_sawyer.txt-2
+copy file to remote server finished!
+mr-pg-being_ernest.txt-5
+mr-pg-tom_sawyer.txt-3
+/root/mapreduce/src/main/mr-pg-being_ernest.txt-4
+mr-pg-dorian_gray.txt-4
+/root/mapreduce/src/main/mr-pg-being_ernest.txt-5
+mr-pg-dorian_gray.txt-5
+/root/mapreduce/src/main/mr-pg-tom_sawyer.txt-2
+/root/mapreduce/src/main/mr-pg-tom_sawyer.txt-3
+mr-pg-sherlock_holmes.txt-3
+mr-pg-sherlock_holmes.txt-2
+/root/mapreduce/src/main/mr-pg-dorian_gray.txt-4
+mr-pg-frankenstein.txt-4
+/root/mapreduce/src/main/mr-pg-dorian_gray.txt-5
+mr-pg-frankenstein.txt-5
+/root/mapreduce/src/main/mr-pg-sherlock_holmes.txt-3
+/root/mapreduce/src/main/mr-pg-sherlock_holmes.txt-2
+/root/mapreduce/src/main/mr-pg-frankenstein.txt-4
+/root/mapreduce/src/main/mr-pg-frankenstein.txt-5
+mr-pg-metamorphosis.txt-4
+mr-pg-metamorphosis.txt-5
+copy file to remote server finished!
+mr-pg-being_ernest.txt-6
+/root/mapreduce/src/main/mr-pg-metamorphosis.txt-4
+copy file to remote server finished!
+mr-pg-being_ernest.txt-7
+/root/mapreduce/src/main/mr-pg-metamorphosis.txt-5
+mr-pg-grimm.txt-4
+mr-pg-grimm.txt-5
+/root/mapreduce/src/main/mr-pg-being_ernest.txt-6
+/root/mapreduce/src/main/mr-pg-being_ernest.txt-7
+mr-pg-dorian_gray.txt-7
+mr-pg-dorian_gray.txt-6
+/root/mapreduce/src/main/mr-pg-grimm.txt-5
+/root/mapreduce/src/main/mr-pg-grimm.txt-4
+mr-pg-huckleberry_finn.txt-5
+mr-pg-huckleberry_finn.txt-4
+/root/mapreduce/src/main/mr-pg-dorian_gray.txt-7
+/root/mapreduce/src/main/mr-pg-dorian_gray.txt-6
+mr-pg-frankenstein.txt-7
+/root/mapreduce/src/main/mr-pg-huckleberry_finn.txt-5
+/root/mapreduce/src/main/mr-pg-huckleberry_finn.txt-4
+mr-pg-frankenstein.txt-6
+mr-pg-tom_sawyer.txt-5
+mr-pg-tom_sawyer.txt-4
+/root/mapreduce/src/main/mr-pg-frankenstein.txt-7
+mr-pg-metamorphosis.txt-7
+/root/mapreduce/src/main/mr-pg-frankenstein.txt-6
+mr-pg-metamorphosis.txt-6
+/root/mapreduce/src/main/mr-pg-tom_sawyer.txt-5
+mr-pg-sherlock_holmes.txt-5
+/root/mapreduce/src/main/mr-pg-tom_sawyer.txt-4
+/root/mapreduce/src/main/mr-pg-metamorphosis.txt-7
+mr-pg-grimm.txt-7
+mr-pg-sherlock_holmes.txt-4
+/root/mapreduce/src/main/mr-pg-metamorphosis.txt-6
+mr-pg-grimm.txt-6
+/root/mapreduce/src/main/mr-pg-sherlock_holmes.txt-5
+/root/mapreduce/src/main/mr-pg-grimm.txt-7
+/root/mapreduce/src/main/mr-pg-sherlock_holmes.txt-4
+mr-pg-huckleberry_finn.txt-7
+/root/mapreduce/src/main/mr-pg-grimm.txt-6
+/root/mapreduce/src/main/mr-pg-huckleberry_finn.txt-7
+mr-pg-huckleberry_finn.txt-6
+mr-pg-tom_sawyer.txt-7
+copy file to remote server finished!
+mr-pg-being_ernest.txt-4
+copy file to remote server finished!
+mr-pg-being_ernest.txt-8
+/root/mapreduce/src/main/mr-pg-huckleberry_finn.txt-6
+/root/mapreduce/src/main/mr-pg-tom_sawyer.txt-7
+mr-pg-sherlock_holmes.txt-7
+/root/mapreduce/src/main/mr-pg-being_ernest.txt-4
+mr-pg-dorian_gray.txt-4
+mr-pg-tom_sawyer.txt-6
+/root/mapreduce/src/main/mr-pg-being_ernest.txt-8
+mr-pg-dorian_gray.txt-8
+/root/mapreduce/src/main/mr-pg-sherlock_holmes.txt-7
+/root/mapreduce/src/main/mr-pg-dorian_gray.txt-4
+mr-pg-frankenstein.txt-4
+/root/mapreduce/src/main/mr-pg-tom_sawyer.txt-6
+/root/mapreduce/src/main/mr-pg-dorian_gray.txt-8
+mr-pg-frankenstein.txt-8
+mr-pg-sherlock_holmes.txt-6
+copy file to remote server finished!
+mr-pg-being_ernest.txt-9
+/root/mapreduce/src/main/mr-pg-frankenstein.txt-4
+mr-pg-metamorphosis.txt-4
+/root/mapreduce/src/main/mr-pg-frankenstein.txt-8
+/root/mapreduce/src/main/mr-pg-sherlock_holmes.txt-6
+mr-pg-metamorphosis.txt-8
+/root/mapreduce/src/main/mr-pg-being_ernest.txt-9
+mr-pg-dorian_gray.txt-9
+/root/mapreduce/src/main/mr-pg-metamorphosis.txt-4
+mr-pg-grimm.txt-4
+/root/mapreduce/src/main/mr-pg-metamorphosis.txt-8
+mr-pg-grimm.txt-8
+/root/mapreduce/src/main/mr-pg-dorian_gray.txt-9
+mr-pg-frankenstein.txt-9
+/root/mapreduce/src/main/mr-pg-grimm.txt-4
+mr-pg-huckleberry_finn.txt-4
+/root/mapreduce/src/main/mr-pg-grimm.txt-8
+copy file to remote server finished!
+mr-pg-being_ernest.txt-6
+/root/mapreduce/src/main/mr-pg-frankenstein.txt-9
+mr-pg-huckleberry_finn.txt-8
+mr-pg-metamorphosis.txt-9
+/root/mapreduce/src/main/mr-pg-huckleberry_finn.txt-4
+/root/mapreduce/src/main/mr-pg-being_ernest.txt-6
+mr-pg-dorian_gray.txt-6
+/root/mapreduce/src/main/mr-pg-huckleberry_finn.txt-8
+mr-pg-tom_sawyer.txt-4
+/root/mapreduce/src/main/mr-pg-metamorphosis.txt-9
+mr-pg-grimm.txt-9
+mr-pg-tom_sawyer.txt-8
+/root/mapreduce/src/main/mr-pg-grimm.txt-9
+/root/mapreduce/src/main/mr-pg-dorian_gray.txt-6
+/root/mapreduce/src/main/mr-pg-tom_sawyer.txt-4
+mr-pg-huckleberry_finn.txt-9
+mr-pg-sherlock_holmes.txt-4
+/root/mapreduce/src/main/mr-pg-tom_sawyer.txt-8
+mr-pg-frankenstein.txt-6
+mr-pg-sherlock_holmes.txt-8
+/root/mapreduce/src/main/mr-pg-huckleberry_finn.txt-9
+mr-pg-tom_sawyer.txt-9
+/root/mapreduce/src/main/mr-pg-sherlock_holmes.txt-4
+/root/mapreduce/src/main/mr-pg-frankenstein.txt-6
+/root/mapreduce/src/main/mr-pg-sherlock_holmes.txt-8
+mr-pg-metamorphosis.txt-6
+/root/mapreduce/src/main/mr-pg-tom_sawyer.txt-9
+mr-pg-sherlock_holmes.txt-9
+/root/mapreduce/src/main/mr-pg-metamorphosis.txt-6
+mr-pg-grimm.txt-6
+/root/mapreduce/src/main/mr-pg-sherlock_holmes.txt-9
+copy file to remote server finished!
+copy file to remote server finished!
+/root/mapreduce/src/main/mr-pg-grimm.txt-6
+mr-pg-huckleberry_finn.txt-6
+copy file to remote server finished!
+/root/mapreduce/src/main/mr-pg-huckleberry_finn.txt-6
+mr-pg-tom_sawyer.txt-6
+/root/mapreduce/src/main/mr-pg-tom_sawyer.txt-6
+mr-pg-sherlock_holmes.txt-6
+/root/mapreduce/src/main/mr-pg-sherlock_holmes.txt-6
+copy file to remote server finished!
+mr-pg-being_ernest.txt-6
+/root/mapreduce/src/main/mr-pg-being_ernest.txt-6
+mr-pg-dorian_gray.txt-6
+/root/mapreduce/src/main/mr-pg-dorian_gray.txt-6
+mr-pg-frankenstein.txt-6
+/root/mapreduce/src/main/mr-pg-frankenstein.txt-6
+mr-pg-metamorphosis.txt-6
+/root/mapreduce/src/main/mr-pg-metamorphosis.txt-6
+mr-pg-grimm.txt-6
+/root/mapreduce/src/main/mr-pg-grimm.txt-6
+mr-pg-huckleberry_finn.txt-6
+/root/mapreduce/src/main/mr-pg-huckleberry_finn.txt-6
+mr-pg-tom_sawyer.txt-6
+/root/mapreduce/src/main/mr-pg-tom_sawyer.txt-6
+mr-pg-sherlock_holmes.txt-6
+/root/mapreduce/src/main/mr-pg-sherlock_holmes.txt-6
+copy file to remote server finished!
+Worker 2  job finished.
+EXECUTION FINISHED!
+RUNNING TIME:52
+Worker 3  job finished.
+Worker 0  job finished.
+Worker 1  job finished.

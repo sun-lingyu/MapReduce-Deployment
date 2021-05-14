@@ -295,8 +295,12 @@ func (c *Coordinator) server() {
 
 func (c *Coordinator) Get_visual_data() Visual_Data {
 
+	c.maplock.Lock()
 	map_list := c.maplist
+	c.maplock.Unlock()
+	c.reducelock.Lock()
 	reduce_list := c.reducelist
+	c.reducelock.Unlock()
 
 	map_subtree := make(map[string][]Tree_2)
 	map_tree := Tree_0{}
@@ -357,7 +361,6 @@ func (c *Coordinator) Get_visual_data() Visual_Data {
 				reduce_subtree[ip] = append(reduce_subtree[ip], Tree_2{Name: filename, ItemStyle: asset.Itemstyle_setting_done, State: 1, Partition: i})
 			}
 		}
-
 	}
 
 	// ip排序
