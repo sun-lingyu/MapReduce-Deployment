@@ -18,20 +18,21 @@ import (
 )
 
 func main() {
-	if len(os.Args) < 2 {
-		fmt.Fprintf(os.Stderr, "Usage: mrcoordinator inputfiles...\n")
+	if len(os.Args) < 3 {
+		fmt.Fprintf(os.Stderr, "Usage: mrcoordinator task inputfiles...\n")
 		os.Exit(1)
 	}
 
 	startTime := time.Now().UnixNano()
 
-	m := mr.MakeCoordinator(os.Args[1:], 10)
+	m := mr.MakeCoordinator(os.Args[2:], 10)
 
 	// YifanLu here
-	// build ssh connection to workers and send command "go run -race mrworker.go wc"
+	// build ssh connection to workers and send command "go run mrworker.go wc"
 
 	hosts := []string{"192.168.0.132", "192.168.0.184", "192.168.0.33", "192.168.0.199"}
-	command := "go run -race mrworker.go wc"
+	//command := "go run mrworker.go " + os.Args[1]
+	command := "git pull"
 	mr.AwakenWorkers("root", "Ydhlw123", hosts, command)
 
 	for m.Done() == false {

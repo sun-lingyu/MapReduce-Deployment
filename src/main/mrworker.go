@@ -10,13 +10,14 @@ package main
 // Please do not change this file.
 //
 import (
-
-	"github.com/sbinet/go-python"
-	"6.824/mr"
 	"fmt"
 	"log"
 	"os"
+
+	"6.824/mr"
+	"github.com/sbinet/go-python"
 )
+
 var PyStr = python.PyString_FromString
 var GoStr = python.PyString_AS_STRING
 
@@ -40,8 +41,6 @@ func main() {
 		log.Fatal("PyImport Fails\n")
 	}
 
-	fmt.Fprintf(os.Stderr, "Import Success\n")
-
 	mapf, reducef := loadPlugin(module)
 
 	mr.Worker(mapf, reducef)
@@ -60,8 +59,8 @@ func loadPlugin(module *python.PyObject) (*python.PyObject, *python.PyObject) {
 
 }
 func ImportModule(dir, name string) *python.PyObject {
-    sysModule := python.PyImport_ImportModule("sys") // import sys
-    path := sysModule.GetAttrString("path")                    // path = sys.path
-    python.PyList_Insert(path, 0, PyStr(dir))                     // path.insert(0, dir)
-    return python.PyImport_ImportModule(name)            // return __import__(name)
+	sysModule := python.PyImport_ImportModule("sys") // import sys
+	path := sysModule.GetAttrString("path")          // path = sys.path
+	python.PyList_Insert(path, 0, PyStr(dir))        // path.insert(0, dir)
+	return python.PyImport_ImportModule(name)        // return __import__(name)
 }
