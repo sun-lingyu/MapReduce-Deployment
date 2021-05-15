@@ -159,7 +159,6 @@ func readRemote(user, password, host, filename string) (*sftp.Client, *sftp.File
 	//defer sftpClient.Close()
 
 	filename = filepath.Join("/root/mapreduce/src/main", filename)
-	fmt.Println(filename)
 
 	srcFile, err := sftpClient.Open(filename)
 	return sftpClient, srcFile, err
@@ -202,39 +201,30 @@ func sendRemote(user, password, host, oname string) error {
 }
 
 // session.Run 会阻塞，所以需要多线程
-func AwakenWorker(idx int, session *ssh.Session, command string) {
-	fmt.Println("Send command to worker", idx)
-	session.Stdout = os.Stdout
-	session.Stderr = os.Stderr
-	// session.Run("cd /root/mapreduce/src/main;" + "rm mr-* ") 不能有
-	err := session.Run("cd /root/mapreduce/src/main;" + command)
+func AwakenWorker(user, password string, host string, command string) {
+	fmt.Println("Send command to worker" + host)
+	session, err := connect_session(user, password, host, 22)
 	if err != nil {
-		fmt.Print("Run %v on worker %v failed", command, idx)
+		fmt.Printf("Cannot connect to worker %v\n", host)
 	} else {
-		fmt.Println("Worker", idx, " job finished.")
+		session.Stdout = os.Stdout
+		session.Stderr = os.Stderr
+		// session.Run("cd /root/mapreduce/src/main;" + "rm mr-* ") 不能有
+		err := session.Run("cd /root/mapreduce/src/main;" + command)
+		if err != nil {
+			fmt.Printf("Run %v on worker %v failed\n", command, host)
+		} else {
+			fmt.Println("Worker ", host, " job finished.")
+		}
+		session.Close()
 	}
-	session.Close()
+
 }
 
 // This function raise all workers(hosts) up, using ssh session.
 func AwakenWorkers(user, password string, hosts []string, command string) {
-	var (
-		session *ssh.Session
-		err     error
-	)
-	fail := 0
-	for i, host := range hosts {
-		fmt.Println(i, host)
-		session, err = connect_session(user, password, host, 22)
-		if err != nil {
-			fmt.Printf("Cannot connect to worker %v\n", host)
-			fail++
-		} else {
-			go AwakenWorker(i, session, command)
-		}
-	}
-	if fail == len(hosts) {
-		log.Fatal("CANNOT CONNECT TO ANY WORKER\nEXECUTION FAILED!\n")
+	for _, host := range hosts {
+		go AwakenWorker(user, password, host, command)
 	}
 
 }

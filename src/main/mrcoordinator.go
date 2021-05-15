@@ -31,8 +31,8 @@ func main() {
 	// build ssh connection to workers and send command "go run mrworker.go wc"
 
 	hosts := []string{"192.168.0.132", "192.168.0.184", "192.168.0.33", "192.168.0.199"}
-	//command := "go run mrworker.go " + os.Args[1]
-	command := "git pull"
+	command := "go run mrworker.go " + os.Args[1]
+	//command := "git pull"
 	mr.AwakenWorkers("root", "Ydhlw123", hosts, command)
 
 	for m.Done() == false {

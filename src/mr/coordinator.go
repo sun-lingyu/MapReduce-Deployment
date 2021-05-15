@@ -296,10 +296,13 @@ func (c *Coordinator) server() {
 func (c *Coordinator) Get_visual_data() Visual_Data {
 
 	c.maplock.Lock()
-	map_list := c.maplist
+	map_list := make([]mapwork, len(c.maplist))
+	copy(map_list, c.maplist)
 	c.maplock.Unlock()
+
 	c.reducelock.Lock()
-	reduce_list := c.reducelist
+	reduce_list := make([]reducework, len(c.reducelist))
+	copy(reduce_list, c.reducelist)
 	c.reducelock.Unlock()
 
 	map_subtree := make(map[string][]Tree_2)

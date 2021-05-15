@@ -60,18 +60,15 @@ func mapfwrapper(mapf *python.PyObject, filename string, nReduce int) {
 	content, err := ioutil.ReadAll(file)
 	//content := make([]byte,1024*1024)
 	//_,err = file.Read(content)
-	fmt.Printf("read finished!\n")
 	if err != nil {
-		fmt.Printf("%v",err)
+		fmt.Printf("%v", err)
 		fmt.Println("ERRead")
 		log.Fatalf("cannot read %v", filename)
 	}
 	file.Close()
 	sftpClient.Close()
-	
 
 	kva := mapf.CallFunction(filename, string(content))
-	fmt.Printf("call finished!\n")
 	//fmt.Println(python.PyList_Size(kva))
 
 	intermediate := python.PyList_New(0)
@@ -140,7 +137,6 @@ func reducefwrapper(reducef *python.PyObject, rnumber int, nMap int) {
 
 		//read files got from the reply
 		for idx, filename := range reply.Filenames {
-			fmt.Println(filename)
 			sftpClient, ifile, err := readRemote("root", "Ydhlw123", reply.Ips[idx], filename)
 			if err != nil {
 				log.Fatalf("cannot open %v", filename)
@@ -167,7 +163,6 @@ func reducefwrapper(reducef *python.PyObject, rnumber int, nMap int) {
 	oname := fmt.Sprintf("mr-out-%d", rnumber)
 	ofile, _ := ioutil.TempFile(".", oname)
 	onametmp := ofile.Name()
-
 
 	//copied from mrsequencial.go
 	//
@@ -196,14 +191,12 @@ func reducefwrapper(reducef *python.PyObject, rnumber int, nMap int) {
 		i = j
 	}
 
-
-
 	ofile.Close()
 	if err := os.Rename(onametmp, oname); err != nil {
 		log.Fatalf("cannot rename %s", onametmp)
 	}
 
-	// YifanLu here 
+	// YifanLu here
 	// send reduced file to coordinator
 	sendRemote("root", "Ydhlw123", "192.168.0.111", oname) // or from disk ?
 
