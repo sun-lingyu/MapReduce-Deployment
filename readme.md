@@ -12,11 +12,13 @@ This is our EE447 final project, idea comes from MIT 6.824 course project. Contr
 
 - python3-dev : sudo apt-get install python3-dev -y
 
+- python2-dev : sudo apt-get install python2.7-dev -y
+
 
 
 ## Optional package & how to install
 
-- nltk (for word count & inverted index example ): pip install nltk -y
+- nltk (for word count & inverted index example ): pip3 install nltk -y ; pip2 install nltk==3.0.0 -y
 - numpy (for KNN example): pip install numpy
 
 
