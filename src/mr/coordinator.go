@@ -111,7 +111,7 @@ type Coordinator struct {
 // Your code here -- RPC handlers for the worker to call.
 
 func (c *Coordinator) backgroundTimer(i int, wtype int) {
-	timer := time.NewTimer(10 * time.Second)
+	timer := time.NewTimer(1000 * time.Second)
 	defer timer.Stop()
 	<-timer.C
 	switch wtype {
