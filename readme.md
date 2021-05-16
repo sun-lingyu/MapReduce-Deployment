@@ -89,33 +89,33 @@ cat mr-out-* | sort | more
 
 **word count**:
 
-<img src="image/wordcount.png" alt="wordcount" style="zoom:83%;" />
+<img src="images/wordcount.png" alt="wordcount" style="zoom:83%;" />
 
 ---
 
 **inverted index**:
 
-<img src="image/invertedindex.png" alt="invertedindex" style="zoom:83%;" />
+<img src="images/invertedindex.png" alt="invertedindex" style="zoom:83%;" />
 
 ---
 
 **KNN large dataset:**
 
-<img src="image/KNN.png" alt="wordcount" style="zoom:83%;" />
+<img src="images/KNN.png" alt="wordcount" style="zoom:83%;" />
 
 ### Visualization
 
 **worker perspective**
 
-<img src="image/worker.jpg" alt="worker" style="zoom:50%;" />
+<img src="images/worker.jpg" alt="worker" style="zoom:50%;" />
 
 ---
 
 **file perspective**
 
-<img src="image/file.jpg" alt="file" style="zoom:50%;" />
+<img src="images/file.jpg" alt="file" style="zoom:50%;" />
 
-<img src="image/file2.jpg" alt="file" style="zoom:50%;" />
+<img src="images/file2.jpg" alt="file" style="zoom:50%;" />
 
 ### Acknowledge
 
