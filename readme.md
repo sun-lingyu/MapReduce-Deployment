@@ -4,7 +4,7 @@ This is our EE447 final project, idea comes from MIT 6.824 course project. Contr
 
 
 
-### Required package & how to install
+## Required package & how to install
 
 - golang 1.15+
 
@@ -14,14 +14,14 @@ This is our EE447 final project, idea comes from MIT 6.824 course project. Contr
 
 
 
-### Optional package & how to install
+## Optional package & how to install
 
 - nltk (for word count & inverted index example ): pip install nltk -y
 - numpy (for KNN example): pip install numpy
 
 
 
-### Usage
+## Usage
 
 First run ` git clone https://github.com/yifanlu0227/mapreduce.git ` to download this resposity to your machines. Select one machine to be the coordinator, and  others to be workers. 
 
@@ -37,7 +37,7 @@ And you should make sure the 1234 port and 8081 port are available, since we wil
 
 
 
-### Python support
+## Python support
 
 Our MapReduce support python development, i.e., you can just provide a simple python file including *map* function and *reduce* function. You can refer to our provide example like word count `mapreduce/src/main/wc.py` .
 
@@ -85,7 +85,7 @@ cat mr-out-* | sort | more
 
 
 
-### Experiment
+## Experiment
 
 **word count**:
 
@@ -103,7 +103,7 @@ cat mr-out-* | sort | more
 
 <img src="images/KNN.png" alt="wordcount" style="zoom:83%;" />
 
-### Visualization
+## Visualization
 
 **worker perspective**
 
@@ -117,6 +117,6 @@ cat mr-out-* | sort | more
 
 <img src="images/file2.jpg" alt="file" style="zoom:50%;" />
 
-### Acknowledge
+## Acknowledge
 
 MIT 6.824
